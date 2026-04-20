@@ -242,7 +242,7 @@ impl IsIndexContainer for DynamicPrecisionIndexVec {
         }
     }
 
-    fn iter(&self) -> IsIndexContainerIterator<Self> {
+    fn iter(&self) -> IsIndexContainerIterator<'_, Self> {
         IsIndexContainerIterator::new(self)
     }
 }

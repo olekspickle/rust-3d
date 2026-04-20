@@ -55,7 +55,7 @@ impl IsIndexContainer for U32IndexVec {
         self.data.reserve(n)
     }
 
-    fn iter(&self) -> IsIndexContainerIterator<Self> {
+    fn iter(&self) -> IsIndexContainerIterator<'_, Self> {
         IsIndexContainerIterator::new(self)
     }
 }
