@@ -24,8 +24,6 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 use crate::{IsClearable, IsIndexContainer, IsIndexContainerIterator};
 
-use std::{u16, u32, u8, usize};
-
 //------------------------------------------------------------------------------
 
 #[derive(Clone, Default)]
