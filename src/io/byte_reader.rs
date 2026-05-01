@@ -27,6 +27,7 @@ use std::io::{Read, Result as iRes};
 //------------------------------------------------------------------------------
 
 /// Trait for binary data readers
+#[allow(dead_code)]
 pub trait IsByteReader {
     fn read_i8<R>(read: &mut R) -> iRes<i8>
     where
