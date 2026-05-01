@@ -57,7 +57,7 @@ where
     }
 
     for f in 0..nf_new {
-        let (a, b, c) = (indices[3 * f + 0], indices[3 * f + 1], indices[3 * f + 2]);
+        let (a, b, c) = (indices[3 * f], indices[3 * f + 1], indices[3 * f + 2]);
         if a == b || a == c || b == c {
             continue;
         }

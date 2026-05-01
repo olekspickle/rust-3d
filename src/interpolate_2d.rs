@@ -105,8 +105,8 @@ where
         let mut traveled_before: f64 = 0.0;
 
         for j in 1..base_points.len() {
-            let ref p_prev = base_points.data[j - 1];
-            let ref p_now = base_points.data[j];
+            let p_prev = &base_points.data[j - 1];
+            let p_now = &base_points.data[j];
 
             traveled +=
                 ((p_now.x() - p_prev.x()).powi(2) + (p_now.y() - p_prev.y()).powi(2)).sqrt();
@@ -148,8 +148,8 @@ where
 
         for j in 1..base_points.len() {
             //@todo fails if path too small, handle this
-            let ref p_prev = base_points.data[j - 1];
-            let ref p_now = base_points.data[j];
+            let p_prev = &base_points.data[j - 1];
+            let p_now = &base_points.data[j];
 
             traveled +=
                 ((p_now.x() - p_prev.x()).powi(2) + (p_now.y() - p_prev.y()).powi(2)).sqrt();

@@ -61,10 +61,10 @@ where
         upper.push(sorted[i].clone());
     }
 
-    if lower.len() > 0 {
+    if !lower.is_empty() {
         lower.pop().unwrap();
     } //safe, since len > 0
-    if upper.len() > 0 {
+    if !upper.is_empty() {
         upper.pop().unwrap();
     } //safe, since len > 0
 

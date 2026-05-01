@@ -57,7 +57,7 @@ impl HasLength for LineSegment2D {
 
 impl HasBoundingBox2DMaybe for LineSegment2D {
     fn bounding_box_maybe(&self) -> Option<BoundingBox2D> {
-        BoundingBox2D::from_iterator([&self.start, &self.end].iter().map(|x| *x)).ok()
+        BoundingBox2D::from_iterator([&self.start, &self.end].iter().copied()).ok()
     }
 }
 

@@ -49,14 +49,14 @@ where
     pub fn new() -> PointCloud3Df32<P> {
         PointCloud3Df32 {
             data: Vec::new(),
-            _phantom: PhantomData::default(),
+            _phantom: PhantomData,
         }
     }
     /// Creates a new, empty point cloud with capacity for n points
     pub fn with_capacity(n: usize) -> PointCloud3Df32<P> {
         PointCloud3Df32 {
             data: Vec::with_capacity(3 * n),
-            _phantom: PhantomData::default(),
+            _phantom: PhantomData,
         }
     }
 }
@@ -117,14 +117,14 @@ where
 
     fn get_d(&self, index: usize) -> Option<P> {
         Some(P::new(
-            *self.data.get(3 * index + 0)? as f64,
+            *self.data.get(3 * index)? as f64,
             *self.data.get(3 * index + 1)? as f64,
             *self.data.get(3 * index + 2)? as f64,
         ))
     }
 
     fn set_d(&mut self, index: usize, p: P) {
-        self.data[3 * index + 0] = p.x() as f32;
+        self.data[3 * index] = p.x() as f32;
         self.data[3 * index + 1] = p.y() as f32;
         self.data[3 * index + 2] = p.z() as f32;
     }
@@ -136,7 +136,7 @@ where
 {
     fn move_by(&mut self, x: f64, y: f64, z: f64) {
         for index in 0..self.data.len() / 3 {
-            self.data[3 * index + 0] += x as f32;
+            self.data[3 * index] += x as f32;
             self.data[3 * index + 1] += y as f32;
             self.data[3 * index + 2] += z as f32;
         }
@@ -163,7 +163,7 @@ where
         let mut maxz = d[2];
 
         for i in 1..n_p {
-            let [x, y, z] = [d[3 * i + 0], d[3 * i + 1], d[3 * i + 2]];
+            let [x, y, z] = [d[3 * i], d[3 * i + 1], d[3 * i + 2]];
             if x < minx {
                 minx = x;
             }
@@ -209,12 +209,12 @@ where
     }
 }
 
-impl<P> Into<Vec<f32>> for PointCloud3Df32<P>
+impl<P> From<PointCloud3Df32<P>> for Vec<f32>
 where
     P: IsBuildable3D,
 {
-    fn into(self) -> Vec<f32> {
-        self.data
+    fn from(val: PointCloud3Df32<P>) -> Self {
+        val.data
     }
 }
 
@@ -225,7 +225,7 @@ where
     fn from(data: Vec<f32>) -> Self {
         Self {
             data,
-            _phantom: PhantomData::default(),
+            _phantom: PhantomData,
         }
     }
 }

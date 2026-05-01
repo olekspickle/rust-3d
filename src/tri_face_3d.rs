@@ -37,7 +37,7 @@ pub struct TriFace3D {
 
 impl TriFace3D {
     pub fn new(a: Point3D, b: Point3D, c: Point3D) -> Result<Self> {
-        match BoundingBox3D::from_iterator([&a, &b, &c].iter().map(|x| *x)) {
+        match BoundingBox3D::from_iterator([&a, &b, &c].iter().copied()) {
             Err(_) => Err(ErrorKind::TriFace3DNotSpanningVolume),
             Ok(_) => Ok(Self { a, b, c }),
         }
@@ -92,7 +92,7 @@ impl IsSATObject for TriFace3D {
 
 impl HasBoundingBox3D for TriFace3D {
     fn bounding_box(&self) -> BoundingBox3D {
-        BoundingBox3D::from_iterator([&self.a, &self.b, &self.c].iter().map(|x| *x)).unwrap()
+        BoundingBox3D::from_iterator([&self.a, &self.b, &self.c].iter().copied()).unwrap()
         // safe since ensured in constructor
     }
 }

@@ -30,25 +30,18 @@ use std::marker::PhantomData;
 
 #[derive(Clone)]
 /// AABBTree3D, an axis aligned bounding box tree in 3D for fast collision detection
+#[derive(Default)]
 pub enum AABBTree3D<HB>
 where
     HB: HasBoundingBox3D + Clone,
 {
+    #[default]
     Empty,
     Leaf(AABBTree3DLeaf<HB>),
     Branch(AABBTree3DBranch<HB>),
 }
 
 //------------------------------------------------------------------------------
-
-impl<HB> Default for AABBTree3D<HB>
-where
-    HB: HasBoundingBox3D + Clone,
-{
-    fn default() -> Self {
-        Self::Empty
-    }
-}
 
 //------------------------------------------------------------------------------
 
@@ -94,7 +87,7 @@ where
         }
     }
 
-    pub fn any<'a, F>(&'a self, f: &F) -> bool
+    pub fn any<F>(&self, f: &F) -> bool
     where
         F: Fn(&HB) -> bool,
     {
@@ -105,7 +98,7 @@ where
         }
     }
 
-    pub fn for_each_intersection_candidate<'a, F>(&'a self, line: &Line3D, f: &mut F)
+    pub fn for_each_intersection_candidate<F>(&self, line: &Line3D, f: &mut F)
     where
         F: FnMut(&HB),
     {
@@ -116,7 +109,7 @@ where
         }
     }
 
-    pub fn for_each_collision_candidate<'a, F>(&'a self, bb: &BoundingBox3D, f: &mut F)
+    pub fn for_each_collision_candidate<F>(&self, bb: &BoundingBox3D, f: &mut F)
     where
         F: FnMut(&HB),
     {
@@ -193,13 +186,13 @@ where
 
                     let dleft = data
                         .iter()
+                        .filter(|&x| Self::is_left_of(&comp, &x.bounding_box(), &center))
                         .cloned()
-                        .filter(|x| Self::is_left_of(&comp, &x.bounding_box(), &center))
                         .collect::<Vec<_>>();
                     let dright = data
                         .iter()
+                        .filter(|&x| Self::is_right_of(&comp, &x.bounding_box(), &center))
                         .cloned()
-                        .filter(|x| Self::is_right_of(&comp, &x.bounding_box(), &center))
                         .collect::<Vec<_>>();
 
                     if (dleft.len() == dright.len()) && dleft.len() == data.len() {
@@ -238,7 +231,7 @@ where
     }
 
     fn bb_of(data: &Vec<HB>) -> Result<BoundingBox3D> {
-        if data.len() == 0 {
+        if data.is_empty() {
             return Err(ErrorKind::TooFewPoints);
         }
         let mut result = data[0].bounding_box();
@@ -356,7 +349,7 @@ where
         }
     }
 
-    pub fn any<'a, F>(&'a self, f: &F) -> bool
+    pub fn any<F>(&self, f: &F) -> bool
     where
         F: Fn(&HB) -> bool,
     {
@@ -369,7 +362,7 @@ where
         false
     }
 
-    pub fn for_each_intersection_candidate<'a, F>(&'a self, line: &Line3D, f: &mut F)
+    pub fn for_each_intersection_candidate<F>(&self, line: &Line3D, f: &mut F)
     where
         F: FnMut(&HB),
     {
@@ -383,7 +376,7 @@ where
         }
     }
 
-    pub fn for_each_collision_candidate<'a, F>(&'a self, bb: &BoundingBox3D, f: &mut F)
+    pub fn for_each_collision_candidate<F>(&self, bb: &BoundingBox3D, f: &mut F)
     where
         F: FnMut(&HB),
     {
@@ -520,14 +513,14 @@ where
         }
     }
 
-    pub fn any<'a, F>(&'a self, f: &F) -> bool
+    pub fn any<F>(&self, f: &F) -> bool
     where
         F: Fn(&HB) -> bool,
     {
         self.left.any(f) || self.right.any(f)
     }
 
-    pub fn for_each_intersection_candidate<'a, F>(&'a self, line: &Line3D, f: &mut F)
+    pub fn for_each_intersection_candidate<F>(&self, line: &Line3D, f: &mut F)
     where
         F: FnMut(&HB),
     {
@@ -539,7 +532,7 @@ where
         self.right.for_each_intersection_candidate(line, f);
     }
 
-    pub fn for_each_collision_candidate<'a, F>(&'a self, bb: &BoundingBox3D, f: &mut F)
+    pub fn for_each_collision_candidate<F>(&self, bb: &BoundingBox3D, f: &mut F)
     where
         F: FnMut(&HB),
     {

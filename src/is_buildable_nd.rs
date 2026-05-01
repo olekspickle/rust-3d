@@ -60,6 +60,6 @@ pub trait IsBuildableND: Sized + IsND {
             );
         }
 
-        Self::new_nd(&buffer)
+        Self::new_nd(buffer)
     }
 }

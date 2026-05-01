@@ -102,7 +102,7 @@ where
         //@todo implemented on its own, since the code can be faster without vecs
         let mut result = Vec::new();
         self.knearest(search, 1, &mut result);
-        result.get(0).cloned()
+        result.first().cloned()
     }
 }
 
@@ -228,8 +228,8 @@ where
 
         let comp = dimension_compare(search, &self.val, self.dimension);
 
-        match comp {
-            Ok(res) => match res {
+        if let Ok(res) = comp {
+            match res {
                 Ordering::Less => {
                     if let Some(ref node) = self.left {
                         node.knearest(search, n, pc);
@@ -240,8 +240,7 @@ where
                         node.knearest(search, n, pc);
                     }
                 }
-            },
-            Err(_) => {}
+            }
         }
 
         Self::sort_and_limit(pc, search, n);
@@ -256,8 +255,8 @@ where
         let border_left = current_search - distance_best;
         let border_right = current_search + distance_best;
 
-        match comp {
-            Ok(res) => match res {
+        if let Ok(res) = comp {
+            match res {
                 Ordering::Less => {
                     if let Some(ref node) = self.right {
                         if pc.len() < n || border_right >= current_val {
@@ -272,8 +271,7 @@ where
                         }
                     }
                 }
-            },
-            Err(_) => {}
+            }
         }
 
         Self::sort_and_limit(pc, search, n);
@@ -290,8 +288,8 @@ where
 
         let comp = dimension_compare(&sphere.center, &self.val, self.dimension);
 
-        match comp {
-            Ok(res) => match res {
+        if let Ok(res) = comp {
+            match res {
                 Ordering::Less => {
                     if let Some(ref node) = self.left {
                         node.in_sphere(sphere, pc);
@@ -302,8 +300,7 @@ where
                         node.in_sphere(sphere, pc);
                     }
                 }
-            },
-            Err(_) => {}
+            }
         }
 
         let (current_search, current_val) = match self.dimension {
@@ -315,8 +312,8 @@ where
         let border_left = current_search - *sphere.radius;
         let border_right = current_search + *sphere.radius;
 
-        match comp {
-            Ok(res) => match res {
+        if let Ok(res) = comp {
+            match res {
                 Ordering::Less => {
                     if let Some(ref node) = self.right {
                         if border_right >= current_val {
@@ -331,8 +328,7 @@ where
                         }
                     }
                 }
-            },
-            Err(_) => {}
+            }
         }
     }
 
@@ -355,8 +351,8 @@ where
 
             let comp = dimension_compare(&box_3d.center, &self.val, self.dimension);
 
-            match comp {
-                Ok(res) => match res {
+            if let Ok(res) = comp {
+                match res {
                     Ordering::Less => {
                         if let Some(ref node) = self.left {
                             node.in_box(box_3d, pc);
@@ -367,8 +363,7 @@ where
                             node.in_box(box_3d, pc);
                         }
                     }
-                },
-                Err(_) => {}
+                }
             }
 
             let (current_search, current_val, current_size) = match self.dimension {
@@ -380,8 +375,8 @@ where
             let border_left = current_search - 0.5 * *current_size;
             let border_right = current_search + 0.5 * *current_size;
 
-            match comp {
-                Ok(res) => match res {
+            if let Ok(res) = comp {
+                match res {
                     Ordering::Less => {
                         if let Some(ref node) = self.right {
                             if border_right >= current_val {
@@ -396,13 +391,12 @@ where
                             }
                         }
                     }
-                },
-                Err(_) => {}
+                }
             }
         }
     }
 
-    fn sort_and_limit<'a, PSearch, PFind>(pc: &'a mut Vec<PFind>, search: &PSearch, max_size: usize)
+    fn sort_and_limit<PSearch, PFind>(pc: &mut Vec<PFind>, search: &PSearch, max_size: usize)
     where
         PSearch: Is3D,
         PFind: Is3D + Clone,

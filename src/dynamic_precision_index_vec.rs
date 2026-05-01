@@ -206,7 +206,7 @@ impl IsIndexContainer for DynamicPrecisionIndexVec {
             Mode::U8(ref vec) => vec[i] as usize,
             Mode::U16(ref vec) => vec[i] as usize,
             Mode::U32(ref vec) => vec[i] as usize,
-            Mode::Usize(ref vec) => vec[i] as usize,
+            Mode::Usize(ref vec) => vec[i],
         }
     }
 

@@ -74,7 +74,7 @@ where
         line: &[u8],
     ) -> IOResult<P> {
         if !*delim_determined {
-            *delim = estimate_delimiter(1, &line).ok_or(IOError::EstimateDelimiter)?;
+            *delim = estimate_delimiter(1, line).ok_or(IOError::EstimateDelimiter)?;
             *delim_determined = true;
         }
 
@@ -82,12 +82,12 @@ where
 
         let x = words
             .next()
-            .and_then(|word| from_ascii(word))
+            .and_then(from_ascii)
             .ok_or(IOError::Vertex(Some(i_line)))?;
 
         let y = words
             .next()
-            .and_then(|word| from_ascii(word))
+            .and_then(from_ascii)
             .ok_or(IOError::Vertex(Some(i_line)))?;
 
         Ok(P::new(x, y))
@@ -154,7 +154,7 @@ where
 {
     let n = ra.len();
     for i in 0..n {
-        let ref p = ra[i];
+        let p = &ra[i];
         let buffer = p.x().to_string() + delim_coord + &p.y().to_string() + delim_pos;
         write.write_all(buffer.as_bytes())?;
     }

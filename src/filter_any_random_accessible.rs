@@ -43,7 +43,7 @@ where
         let view_initial = view.clone();
         for f in &self.filters {
             let mut view_now = view_initial.clone();
-            f.filter(&ra, &mut view_now);
+            f.filter(ra, &mut view_now);
             view.union(view_now);
         }
     }

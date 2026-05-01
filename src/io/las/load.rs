@@ -103,10 +103,11 @@ where
             if chunk.is_full() {
                 return Some(Ok(chunk));
             } else if self.header.is_none() {
-                if let Ok(header) = load_header(&mut self.read).and_then(|x| Header::try_from(x)) {
-                    if let Ok(_) = self
+                if let Ok(header) = load_header(&mut self.read).and_then(Header::try_from) {
+                    if self
                         .read
                         .seek(SeekFrom::Start(header.offset_point_data as u64))
+                        .is_ok()
                     {
                         self.buffer = vec![0u8; header.point_record_length as usize];
                         let n = header.n_point_records;

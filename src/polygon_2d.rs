@@ -118,7 +118,7 @@ where
     fn length(&self) -> f64 {
         let mut length = self.pc.length();
 
-        if self.pc.data.len() > 0 {
+        if !self.pc.data.is_empty() {
             length += dist_2d(&self.pc.data[self.pc.data.len() - 1], &self.pc.data[0]);
         }
 

@@ -56,7 +56,7 @@ where
     }
 
     fn face_vertex_ids(&self, faceid: FId) -> Option<Face3> {
-        let id1 = 3 * faceid.0 + 0;
+        let id1 = 3 * faceid.0;
         let id2 = 3 * faceid.0 + 1;
         let id3 = 3 * faceid.0 + 2;
 
@@ -235,18 +235,18 @@ where
         Self {
             pc: pt.0,
             topology: pt.1,
-            _phantom: PhantomData::default(),
+            _phantom: PhantomData,
         }
     }
 }
 
-impl<P, ID, IC> Into<(ID, IC)> for Mesh3D<P, ID, IC>
+impl<P, ID, IC> From<Mesh3D<P, ID, IC>> for (ID, IC)
 where
     P: Is3D,
     ID: IsDataContainer<P>,
     IC: IsIndexContainer,
 {
-    fn into(self) -> (ID, IC) {
-        (self.pc, self.topology)
+    fn from(val: Mesh3D<P, ID, IC>) -> Self {
+        (val.pc, val.topology)
     }
 }

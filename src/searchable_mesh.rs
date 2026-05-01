@@ -133,7 +133,7 @@ where
     fn edges_of_face(&self, faceid: FId) -> Option<(EId, EId, EId)> {
         self.ensure_face_id(faceid).ok()?;
         Some((
-            EId(faceid.0 * 3 + 0),
+            EId(faceid.0 * 3),
             EId(faceid.0 * 3 + 1),
             EId(faceid.0 * 3 + 2),
         ))
@@ -226,13 +226,13 @@ where
     }
 }
 
-impl<M, T, IC> Into<(M, HalfEdge<IC>)> for SearchableMesh<M, T, IC>
+impl<M, T, IC> From<SearchableMesh<M, T, IC>> for (M, HalfEdge<IC>)
 where
     M: IsMesh<T, Face3>,
     IC: IsIndexContainer,
 {
-    fn into(self) -> (M, HalfEdge<IC>) {
-        (self.mesh, self.he)
+    fn from(val: SearchableMesh<M, T, IC>) -> Self {
+        (val.mesh, val.he)
     }
 }
 
@@ -245,7 +245,7 @@ where
         Self {
             mesh: me.0,
             he: me.1,
-            phantomt: PhantomData::default(),
+            phantomt: PhantomData,
         }
     }
 }

@@ -259,20 +259,20 @@ pub struct PartialHeader {
     pub vertex: VertexData,
 }
 
-impl Into<PartialHeader> for FullHeader {
-    fn into(self) -> PartialHeader {
+impl From<FullHeader> for PartialHeader {
+    fn from(val: FullHeader) -> Self {
         PartialHeader {
-            format: self.format,
-            vertex: self.vertex,
+            format: val.format,
+            vertex: val.vertex,
         }
     }
 }
 
-impl Into<PartialHeader> for Header {
-    fn into(self) -> PartialHeader {
-        match self {
-            Self::Full(x) => x.into(),
-            Self::Partial(x) => x,
+impl From<Header> for PartialHeader {
+    fn from(val: Header) -> Self {
+        match val {
+            Header::Full(x) => x.into(),
+            Header::Partial(x) => x,
         }
     }
 }

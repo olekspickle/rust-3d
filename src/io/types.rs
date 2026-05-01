@@ -111,7 +111,7 @@ where
         }
         StackVec::<U, SIZE> {
             size: self.size,
-            data: data,
+            data,
         }
     }
 

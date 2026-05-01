@@ -174,7 +174,7 @@ impl Matrix4 {
         N: IsNormalized3D,
     {
         let rad = r.0;
-        let ref u = axis;
+        let u = axis;
         let mut result = Matrix4::default();
         result.data[0][0] = rad.cos() + u.x() * u.x() * (1.0 - rad.cos());
         result.data[0][1] = u.x() * u.y() * (1.0 - rad.cos()) - u.z() * rad.sin();
@@ -226,7 +226,7 @@ impl Matrix4 {
         N: IsNormalized3D,
     {
         let n = target.normalized()?;
-        let u = cross(&*up, target);
+        let u = cross(up, target);
         let v = cross(&n, &u);
 
         let mut result = Matrix4::default();

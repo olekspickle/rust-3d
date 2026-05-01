@@ -39,9 +39,9 @@ impl<RA, T> IsFilterRandomAccessible<RA, T> for FilterAllRandomAccessible<RA, T>
 where
     RA: IsRandomAccessible<T>,
 {
-    fn filter(&self, ra: &RA, mut view: &mut View) {
+    fn filter(&self, ra: &RA, view: &mut View) {
         for f in &self.filters {
-            f.filter(&ra, &mut view)
+            f.filter(ra, view)
         }
     }
 }

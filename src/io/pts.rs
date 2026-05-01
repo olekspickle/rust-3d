@@ -68,17 +68,17 @@ where
 
         let x = words
             .next()
-            .and_then(|word| from_ascii(word))
+            .and_then(from_ascii)
             .ok_or(IOError::Vertex(Some(i_line)))?;
 
         let y = words
             .next()
-            .and_then(|word| from_ascii(word))
+            .and_then(from_ascii)
             .ok_or(IOError::Vertex(Some(i_line)))?;
 
         let z = words
             .next()
-            .and_then(|word| from_ascii(word))
+            .and_then(from_ascii)
             .ok_or(IOError::Vertex(Some(i_line)))?;
 
         Ok(P::new(x, y, z))
@@ -114,7 +114,7 @@ where
                         let mut words = to_words_skip_empty(line);
                         self.n_vertices = match words
                             .next()
-                            .and_then(|word| from_ascii(word))
+                            .and_then(from_ascii)
                             .ok_or(IOError::VertexCount(Some(self.i_line)))
                         {
                             Ok(n) => Some(n),
@@ -144,7 +144,7 @@ where
                             let mut words = to_words_skip_empty(line);
                             self.n_vertices = match words
                                 .next()
-                                .and_then(|word| from_ascii(word))
+                                .and_then(from_ascii)
                                 .ok_or(IOError::VertexCount(Some(self.i_line)))
                             {
                                 Ok(n) => Some(n),

@@ -146,12 +146,11 @@ where
     /// Creates an iterator for reading a .glb file
     pub fn new_glb(mut read: R, folder_path: PathBuf) -> IOResult<Self> {
         let _header = read_file_header(&mut read)?;
-        let pos_chunk_json = read.seek(SeekFrom::Current(0))?;
-        let chunk_json =
-            read_chunk(&mut read, pos_chunk_json).and_then(|x| JSONChunk::try_from(x))?;
-        let pos_chunk_bin = read.seek(SeekFrom::Current(0))? + 8; // +8 since two u32 are part of the header
-        let chunk_bin = read_chunk_header(&mut read, pos_chunk_bin)
-            .and_then(|x| BinChunkHeader::try_from(x))?;
+        let pos_chunk_json = read.stream_position()?;
+        let chunk_json = read_chunk(&mut read, pos_chunk_json).and_then(JSONChunk::try_from)?;
+        let pos_chunk_bin = read.stream_position()? + 8; // +8 since two u32 are part of the header
+        let chunk_bin =
+            read_chunk_header(&mut read, pos_chunk_bin).and_then(BinChunkHeader::try_from)?;
 
         let json = parse_json(&chunk_json)?;
 
@@ -273,7 +272,7 @@ where
                     to_fetch: acc_id.count as usize / 3,
                     bytes_to_skip: if let Some(stride) = bw_id.byte_stride {
                         let size = match ct {
-                            IndexComponentType::U8 => 3 * 1,  // 3 * 1byte
+                            IndexComponentType::U8 => 3,      // 3 * 1byte
                             IndexComponentType::U16 => 3 * 2, // 3 * 2bytes
                             IndexComponentType::U32 => 3 * 4, // 3 * 4bytes
                         };
@@ -393,7 +392,7 @@ where
                 self.is_done = true;
                 None
             }
-            Err(e) => return Some(Err(e)),
+            Err(e) => Some(Err(e)),
         }
     }
 }
@@ -688,7 +687,7 @@ where
                                     let borrow = tmp.borrow();
                                     let mut cursor = Cursor::new(&borrow[*seek as usize..]);
                                     let res = Self::fetch_point(&mut cursor, &self.p_settings);
-                                    *seek = *seek + cursor.seek(SeekFrom::Current(0)).unwrap(); //safe, since not really moving the cursor
+                                    *seek += cursor.stream_position().unwrap(); //safe, since not really moving the cursor
                                     res
                                 }
                             }
@@ -736,7 +735,7 @@ where
                                             &mut cursor,
                                             f_settings,
                                         );
-                                        *seek = *seek + cursor.seek(SeekFrom::Current(0)).unwrap(); //safe, since not really moving the cursor
+                                        *seek += cursor.stream_position().unwrap(); //safe, since not really moving the cursor
                                         match res {
                                             Err(e) => return Some(Err(e)),
                                             Ok(x) => chunk.push(x).unwrap(), // unwrap safe since we only call this if chunk.has_space()

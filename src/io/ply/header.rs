@@ -93,38 +93,28 @@ where
             continue;
         }
 
-        match opt_n_vertices {
-            None => {
-                if line.starts_with(b"element vertex") {
-                    read_state = HeaderReadState::Vertex;
-                    let mut words = to_words_skip_empty(line);
-                    opt_n_vertices = Some(
-                        words
-                            .nth(2)
-                            .and_then(|w| from_ascii(w))
-                            .ok_or(IOError::Vertex(Some(*i_line)))?,
-                    );
-                    continue;
-                }
-            }
-            Some(_) => {}
+        if opt_n_vertices.is_none() && line.starts_with(b"element vertex") {
+            read_state = HeaderReadState::Vertex;
+            let mut words = to_words_skip_empty(line);
+            opt_n_vertices = Some(
+                words
+                    .nth(2)
+                    .and_then(from_ascii)
+                    .ok_or(IOError::Vertex(Some(*i_line)))?,
+            );
+            continue;
         }
 
-        match opt_n_faces {
-            None => {
-                if line.starts_with(b"element face") {
-                    read_state = HeaderReadState::Face;
-                    let mut words = to_words_skip_empty(line);
-                    opt_n_faces = Some(
-                        words
-                            .nth(2)
-                            .and_then(|w| from_ascii(w))
-                            .ok_or(IOError::Face(Some(*i_line)))?,
-                    );
-                    continue;
-                }
-            }
-            Some(_) => {}
+        if opt_n_faces.is_none() && line.starts_with(b"element face") {
+            read_state = HeaderReadState::Face;
+            let mut words = to_words_skip_empty(line);
+            opt_n_faces = Some(
+                words
+                    .nth(2)
+                    .and_then(from_ascii)
+                    .ok_or(IOError::Face(Some(*i_line)))?,
+            );
+            continue;
         }
 
         if line.starts_with(b"property") {

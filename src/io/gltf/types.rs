@@ -243,7 +243,7 @@ pub enum MeshOrChildren {
 impl MeshOrChildren {
     pub fn mesh(&self) -> Option<&Mesh> {
         match self {
-            MeshOrChildren::Mesh(x) => Some(&x),
+            MeshOrChildren::Mesh(x) => Some(x),
             MeshOrChildren::Children(_) => None,
         }
     }
@@ -251,7 +251,7 @@ impl MeshOrChildren {
     pub fn children(&self) -> Option<&Vec<Node>> {
         match self {
             MeshOrChildren::Mesh(_) => None,
-            MeshOrChildren::Children(x) => Some(&x),
+            MeshOrChildren::Children(x) => Some(x),
         }
     }
 }
@@ -363,9 +363,8 @@ impl Mesh {
         let mut primitives = Vec::new();
         for primitive_val in primitives_array.iter() {
             // Ignoring invalid primitives
-            match Primitive::new(arrays, primitive_val) {
-                Ok(x) => primitives.push(x),
-                Err(_) => (),
+            if let Ok(x) = Primitive::new(arrays, primitive_val) {
+                primitives.push(x)
             };
         }
 
@@ -396,7 +395,7 @@ impl Primitive {
                 .ok_or(IOError::Gltf(GltfError::JSONPosition))?;
             let indices_id = val.get("indices").and_then(|x| x.as_u64());
             let positions = Accessor::new(arrays, &arrays.accessors[positions_id as usize])
-                .and_then(|x| PosAccessor::new(x))?;
+                .and_then(PosAccessor::new)?;
             let indices = indices_id
                 .and_then(|x| Accessor::new(arrays, &arrays.accessors[x as usize]).ok())
                 .and_then(|x| IndexAccessor::new(x).ok());
@@ -410,8 +409,9 @@ impl Primitive {
 
 //------------------------------------------------------------------------------
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Default)]
 pub enum IndexComponentType {
+    #[default]
     U8,
     U16,
     U32,
@@ -427,12 +427,6 @@ impl IndexComponentType {
                 Err(IOError::Gltf(GltfError::IndexComponentType))
             }
         }
-    }
-}
-
-impl Default for IndexComponentType {
-    fn default() -> Self {
-        Self::U8
     }
 }
 
@@ -512,7 +506,7 @@ impl Accessor {
             .get("componentType")
             .and_then(|x| x.as_u64())
             .ok_or(IOError::Gltf(GltfError::JSONComponentType))
-            .and_then(|x| ComponentType::new(x))?;
+            .and_then(ComponentType::new)?;
         let count = val
             .get("count")
             .and_then(|x| x.as_u64())
@@ -521,7 +515,7 @@ impl Accessor {
             .get("type")
             .and_then(|x| x.as_str())
             .ok_or(IOError::Gltf(GltfError::JSONAccessorType))
-            .and_then(|x| AccessorType::new(x))?;
+            .and_then(AccessorType::new)?;
 
         let buffer_view = BufferView::new(arrays, &arrays.buffer_views[buffer_view_id as usize])?;
 
@@ -677,7 +671,7 @@ impl DataPointer {
             to_skip,
         }
     }
-    pub fn get<'a>(&'a self) -> IOResult<Rc<RefCell<Vec<u8>>>> {
+    pub fn get(&self) -> IOResult<Rc<RefCell<Vec<u8>>>> {
         self.ensure_decoded()?;
         Ok(self.decoded.clone())
     }

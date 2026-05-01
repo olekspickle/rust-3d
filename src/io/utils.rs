@@ -38,7 +38,7 @@ where
 {
     let mut buffer = [0u8; 1];
     for _ in 0..n_bytes {
-        let _ = read.read_exact(&mut buffer)?;
+        read.read_exact(&mut buffer)?;
     }
 
     Ok(())

@@ -53,7 +53,7 @@ where
         for x in data.iter() {
             let bb = x.bounding_box();
             if let Ok(all) = bb_all {
-                bb_all = Ok(all.combine(&&bb));
+                bb_all = Ok(all.combine(&bb));
             } else {
                 bb_all = Ok(bb);
             }
@@ -93,7 +93,7 @@ where
         })
     }
 
-    pub fn for_each_candidate<'a, F>(&'a self, x: f64, y: f64, f: &mut F)
+    pub fn for_each_candidate<F>(&self, x: f64, y: f64, f: &mut F)
     where
         F: FnMut(&HB),
     {

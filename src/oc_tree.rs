@@ -22,7 +22,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 //! OcTree https://en.wikipedia.org/wiki/Octree
 
-use std::{collections::HashSet, iter::IntoIterator};
+use std::collections::HashSet;
 
 use crate::*;
 
@@ -63,7 +63,7 @@ where
             set.insert(p);
         }
 
-        unique_data.extend(set.into_iter());
+        unique_data.extend(set);
         self.root = Some(OcNode::new(&self.bb, unique_data)?);
 
         Ok(())
@@ -313,9 +313,9 @@ where
     pub fn collect(&self, depth: i8, maxdepth: i8, pc: &mut PointCloud3D<P>) {
         let only_collect_centers = maxdepth >= 0 && depth > maxdepth;
         match self {
-            &OcNode::Leaf(ref p) => pc.push(p.clone()),
+            OcNode::Leaf(p) => pc.push(p.clone()),
 
-            &OcNode::Node(ref internal) => {
+            OcNode::Node(internal) => {
                 if let Some(ref n) = internal.ppp {
                     Self::collect_center_or_all(n, only_collect_centers, depth, maxdepth, pc);
                 }

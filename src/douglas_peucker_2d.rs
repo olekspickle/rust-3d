@@ -51,7 +51,7 @@ where
         let mut pc1 = pc.clone();
         let mut pc2 = pc.clone();
 
-        pc1.data = pc.data.iter().cloned().take(index).collect();
+        pc1.data = pc.data.iter().take(index).cloned().collect();
         pc1 = douglas_peucker_2d(pc1, epsilon);
 
         pc2.data = pc.data.into_iter().skip(index).collect();

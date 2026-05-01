@@ -409,12 +409,12 @@ where
     }
 }
 
-impl<P> Into<Vec<P>> for PointCloud3D<P>
+impl<P> From<PointCloud3D<P>> for Vec<P>
 where
     P: Is3D,
 {
-    fn into(self) -> Vec<P> {
-        self.data
+    fn from(val: PointCloud3D<P>) -> Self {
+        val.data
     }
 }
 

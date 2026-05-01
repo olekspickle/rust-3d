@@ -92,7 +92,9 @@ pub trait IsSearchableMesh<V, TU>: IsMesh<V, Face3> {
         {
             let mut add_twin_face = |edgeid| {
                 if let Some(twin) = self.edge_twin(edgeid) {
-                    self.edge_face(twin).map(|x| result.push(x));
+                    if let Some(x) = self.edge_face(twin) {
+                        result.push(x)
+                    }
                 }
             };
 

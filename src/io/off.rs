@@ -94,7 +94,7 @@ where
                     let mut words = to_words_skip_empty(line);
                     match words
                         .next()
-                        .and_then(|word| from_ascii(word))
+                        .and_then(from_ascii)
                         .ok_or(IOError::VertexCount(Some(self.i_line)))
                     {
                         Ok(n) => {
@@ -183,17 +183,17 @@ where
         if count_face == b"3" {
             let a = words
                 .next()
-                .and_then(|word| from_ascii(word))
+                .and_then(from_ascii)
                 .ok_or(IOError::Face(Some(i_line)))?;
 
             let b = words
                 .next()
-                .and_then(|word| from_ascii(word))
+                .and_then(from_ascii)
                 .ok_or(IOError::Face(Some(i_line)))?;
 
             let c = words
                 .next()
-                .and_then(|word| from_ascii(word))
+                .and_then(from_ascii)
                 .ok_or(IOError::Face(Some(i_line)))?;
 
             Ok([a, b, c])
@@ -207,11 +207,11 @@ where
         let mut words = to_words_skip_empty(line);
         let n_vertices = words
             .next()
-            .and_then(|word| from_ascii(word))
+            .and_then(from_ascii)
             .ok_or(IOError::VertexCount(Some(i_line)))?;
         let n_faces = words
             .next()
-            .and_then(|word| from_ascii(word))
+            .and_then(from_ascii)
             .ok_or(IOError::FaceCount(Some(i_line)))?;
 
         Ok([n_vertices, n_faces])
@@ -363,17 +363,17 @@ where
 
     let x = words
         .next()
-        .and_then(|word| from_ascii(word))
+        .and_then(from_ascii)
         .ok_or(IOError::Vertex(Some(i_line)))?;
 
     let y = words
         .next()
-        .and_then(|word| from_ascii(word))
+        .and_then(from_ascii)
         .ok_or(IOError::Vertex(Some(i_line)))?;
 
     let z = words
         .next()
-        .and_then(|word| from_ascii(word))
+        .and_then(from_ascii)
         .ok_or(IOError::Vertex(Some(i_line)))?;
 
     Ok(P::new(x, y, z))

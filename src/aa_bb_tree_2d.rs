@@ -30,25 +30,18 @@ use std::marker::PhantomData;
 
 #[derive(Clone)]
 /// AABBTree2D, an axis aligned bounding box tree in 2D for fast collision detection
+#[derive(Default)]
 pub enum AABBTree2D<HB>
 where
     HB: HasBoundingBox2D + Clone,
 {
+    #[default]
     Empty,
     Leaf(AABBTree2DLeaf<HB>),
     Branch(AABBTree2DBranch<HB>),
 }
 
 //------------------------------------------------------------------------------
-
-impl<HB> Default for AABBTree2D<HB>
-where
-    HB: HasBoundingBox2D + Clone,
-{
-    fn default() -> Self {
-        Self::Empty
-    }
-}
 
 //------------------------------------------------------------------------------
 
@@ -94,7 +87,7 @@ where
         }
     }
 
-    pub fn any<'a, F>(&'a self, f: &F) -> bool
+    pub fn any<F>(&self, f: &F) -> bool
     where
         F: Fn(&HB) -> bool,
     {
@@ -105,7 +98,7 @@ where
         }
     }
 
-    pub fn for_each_collision_candidate<'a, F>(&'a self, bb: &BoundingBox2D, f: &mut F)
+    pub fn for_each_collision_candidate<F>(&self, bb: &BoundingBox2D, f: &mut F)
     where
         F: FnMut(&HB),
     {
@@ -164,19 +157,19 @@ where
                     let bb = Self::bb_of(&data).unwrap(); //unwrap fine, since data non empty and with valid bbs (see new)
                     AABBTree2D::Leaf(AABBTree2DLeaf::new(data, bb))
                 } else {
-                    let compx = depth % 2 != 0;
+                    let compx = !depth.is_multiple_of(2);
                     let bb = Self::bb_of(&data).unwrap(); //unwrap fine due to early return in new and data not empty
                     let center = bb.center_bb();
 
                     let dleft = data
                         .iter()
+                        .filter(|&x| Self::is_left_of(compx, &x.bounding_box(), &center))
                         .cloned()
-                        .filter(|x| Self::is_left_of(compx, &x.bounding_box(), &center))
                         .collect::<Vec<_>>();
                     let dright = data
                         .iter()
+                        .filter(|&x| Self::is_right_of(compx, &x.bounding_box(), &center))
                         .cloned()
-                        .filter(|x| Self::is_right_of(compx, &x.bounding_box(), &center))
                         .collect::<Vec<_>>();
 
                     if (dleft.len() == dright.len()) && dleft.len() == data.len() {
@@ -215,7 +208,7 @@ where
     }
 
     fn bb_of(data: &Vec<HB>) -> Result<BoundingBox2D> {
-        if data.len() == 0 {
+        if data.is_empty() {
             return Err(ErrorKind::TooFewPoints);
         }
         let mut result = data[0].bounding_box();
@@ -327,7 +320,7 @@ where
         }
     }
 
-    pub fn any<'a, F>(&'a self, f: &F) -> bool
+    pub fn any<F>(&self, f: &F) -> bool
     where
         F: Fn(&HB) -> bool,
     {
@@ -340,7 +333,7 @@ where
         false
     }
 
-    pub fn for_each_collision_candidate<'a, F>(&'a self, bb: &BoundingBox2D, f: &mut F)
+    pub fn for_each_collision_candidate<F>(&self, bb: &BoundingBox2D, f: &mut F)
     where
         F: FnMut(&HB),
     {
@@ -467,14 +460,14 @@ where
         }
     }
 
-    pub fn any<'a, F>(&'a self, f: &F) -> bool
+    pub fn any<F>(&self, f: &F) -> bool
     where
         F: Fn(&HB) -> bool,
     {
         self.left.any(f) || self.right.any(f)
     }
 
-    pub fn for_each_collision_candidate<'a, F>(&'a self, bb: &BoundingBox2D, f: &mut F)
+    pub fn for_each_collision_candidate<F>(&self, bb: &BoundingBox2D, f: &mut F)
     where
         F: FnMut(&HB),
     {

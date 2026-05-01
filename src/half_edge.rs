@@ -71,7 +71,7 @@ where
                         estimated_edges_per_vertex,
                         n_edges,
                         face.a.0,
-                        i * 3 + 0,
+                        i * 3,
                     );
                     safe_append_at(
                         &mut vertices_start_edges,
@@ -153,7 +153,7 @@ where
     /// Appends all edges originating (pointing away) from the given vertex (error if id out of bounds)
     pub fn edges_originating(&self, id: VId, result: &mut Vec<EId>) -> Result<()> {
         self.ensure_vertex_id(id)?;
-        result.extend(self.vertices_start_edges[id.0].iter().map(|x| EId(x)));
+        result.extend(self.vertices_start_edges[id.0].iter().map(EId));
         Ok(())
     }
     /// Appends all edges ending (pointing at) the given vertex (error if id out of bounds)
@@ -195,7 +195,7 @@ where
     }
     /// Returns true if the give edge is the first within a face
     fn first_in_face(id: EId) -> bool {
-        id.0 % 3 == 0
+        id.0.is_multiple_of(3)
     }
     /// Returns true if the give edge is the last within a face
     fn last_in_face(id: EId) -> bool {
@@ -232,30 +232,30 @@ where
     }
 }
 
-impl<IC> Into<(IC, Vec<Option<EId>>, Vec<IC>)> for HalfEdge<IC>
+impl<IC> From<HalfEdge<IC>> for (IC, Vec<Option<EId>>, Vec<IC>)
 where
     IC: IsIndexContainer,
 {
-    fn into(self) -> (IC, Vec<Option<EId>>, Vec<IC>) {
-        (self.tails, self.twins, self.vertices_start_edges)
+    fn from(val: HalfEdge<IC>) -> Self {
+        (val.tails, val.twins, val.vertices_start_edges)
     }
 }
 
-impl<IC> Into<(IC, Vec<Option<EId>>)> for HalfEdge<IC>
+impl<IC> From<HalfEdge<IC>> for (IC, Vec<Option<EId>>)
 where
     IC: IsIndexContainer,
 {
-    fn into(self) -> (IC, Vec<Option<EId>>) {
-        (self.tails, self.twins)
+    fn from(val: HalfEdge<IC>) -> Self {
+        (val.tails, val.twins)
     }
 }
 
-impl<IC> Into<Vec<IC>> for HalfEdge<IC>
+impl<IC> From<HalfEdge<IC>> for Vec<IC>
 where
     IC: IsIndexContainer,
 {
-    fn into(self) -> Vec<IC> {
-        self.vertices_start_edges
+    fn from(val: HalfEdge<IC>) -> Self {
+        val.vertices_start_edges
     }
 }
 

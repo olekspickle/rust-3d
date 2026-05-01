@@ -353,21 +353,21 @@ where
 
         let first = words
             .next()
-            .and_then(|w| from_ascii(w))
+            .and_then(from_ascii)
             .ok_or(IOError::Vertex(Some(i_line)))?;
 
         skip_n(&mut words, header.vertex.format.between_first_snd.words);
 
         let snd = words
             .next()
-            .and_then(|w| from_ascii(w))
+            .and_then(from_ascii)
             .ok_or(IOError::Vertex(Some(i_line)))?;
 
         skip_n(&mut words, header.vertex.format.between_snd_third.words);
 
         let third = words
             .next()
-            .and_then(|w| from_ascii(w))
+            .and_then(from_ascii)
             .ok_or(IOError::Vertex(Some(i_line)))?;
 
         // no need to skip 'after' since we're done with this line anyway
@@ -462,7 +462,7 @@ where
             current: 0,
             i_line,
             line_buffer: Vec::new(),
-            phantom: PhantomData::default(),
+            phantom: PhantomData,
         }
     }
 }
@@ -490,7 +490,7 @@ where
                 if let Ok(line) = fetch_line(&mut self.read, &mut self.line_buffer) {
                     self.i_line += 1;
 
-                    match collect_index_line(&line) {
+                    match collect_index_line(line) {
                         None => {
                             self.is_done = true;
                             return Some(Err(IOError::Face(Some(self.i_line))));

@@ -468,11 +468,11 @@ where
 
                     // Ignore this issues since this only fails if a triangle uses a vertex multiple times
                     // Simply do not add this triangle and normal
-                    match mesh.try_add_connection(VId(id_a), VId(id_b), VId(id_c)) {
-                        Ok(_) => {
-                            face_normals.push(n);
-                        }
-                        Err(_) => (),
+                    if mesh
+                        .try_add_connection(VId(id_a), VId(id_b), VId(id_c))
+                        .is_ok()
+                    {
+                        face_normals.push(n);
                     }
                 }
                 DataReserve::Reserve(n) => {
@@ -630,7 +630,7 @@ where
         return Err(IOError::Face(Some(*i_line)));
     }
 
-    let n = read_stl_normal(&line).unwrap_or(N::new(0.0, 0.0, 1.0));
+    let n = read_stl_normal(line).unwrap_or(N::new(0.0, 0.0, 1.0));
 
     line = trim_start(fetch_line(read, line_buffer)?);
     *i_line += 1;
@@ -642,17 +642,17 @@ where
     line = fetch_line(read, line_buffer)?;
     *i_line += 1;
 
-    let a = read_stl_vertex(&line).ok_or(IOError::Vertex(Some(*i_line)))?;
+    let a = read_stl_vertex(line).ok_or(IOError::Vertex(Some(*i_line)))?;
 
     line = fetch_line(read, line_buffer)?;
     *i_line += 1;
 
-    let b = read_stl_vertex(&line).ok_or(IOError::Vertex(Some(*i_line)))?;
+    let b = read_stl_vertex(line).ok_or(IOError::Vertex(Some(*i_line)))?;
 
     line = fetch_line(read, line_buffer)?;
     *i_line += 1;
 
-    let c = read_stl_vertex(&line).ok_or(IOError::Vertex(Some(*i_line)))?;
+    let c = read_stl_vertex(line).ok_or(IOError::Vertex(Some(*i_line)))?;
 
     line = trim_start(fetch_line(read, line_buffer)?);
     *i_line += 1;
@@ -725,15 +725,10 @@ where
 //------------------------------------------------------------------------------
 
 /// Whether format shall be considered to be binary/ASCII or auto determined
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Default)]
 pub enum StlFormat {
     Ascii,
     Binary,
+    #[default]
     Auto,
-}
-
-impl Default for StlFormat {
-    fn default() -> Self {
-        Self::Auto
-    }
 }

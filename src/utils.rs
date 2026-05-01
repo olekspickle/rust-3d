@@ -42,7 +42,7 @@ pub fn until<'a>(line: &'a str, delimiter: &str) -> &'a str {
 }
 
 /// Returns all until delimiter
-pub fn until_bytes<'a>(line: &'a [u8], delimiter: u8) -> &'a [u8] {
+pub fn until_bytes(line: &[u8], delimiter: u8) -> &[u8] {
     line.split(|x| *x == delimiter).next().unwrap_or(&[])
 }
 
@@ -126,7 +126,7 @@ where
 
 /// Estimates the used delimiter within a string
 pub fn estimate_delimiter(minimum_count: usize, line: &[u8]) -> Option<u8> {
-    for candidate in [b' ', b';', b',', b'\t'].iter() {
+    for candidate in b" ;,\t".iter() {
         if line.iter().filter(|c| **c == *candidate).count() >= minimum_count {
             return Some(*candidate);
         }

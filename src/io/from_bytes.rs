@@ -31,7 +31,7 @@ macro_rules! array_from_bytes_le {
     ($t:ty , $n:expr , $bytes:expr) => {{
         let size = std::mem::size_of::<$t>();
         if $bytes.len() != size * $n {
-            return Err(FromBytesError::SizeMismatch)?;
+            Err(FromBytesError::SizeMismatch)?;
         }
 
         let mut arr: [$t; $n] = [<$t>::default(); $n];
@@ -70,7 +70,7 @@ where
 {
     let size = std::mem::size_of::<FB>();
 
-    if bytes.len() != size * target.len() {
+    if bytes.len() != std::mem::size_of_val(target) {
         return Err(FromBytesError::SizeMismatch);
     }
 
